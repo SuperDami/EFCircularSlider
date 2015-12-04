@@ -101,4 +101,9 @@ typedef enum : NSUInteger {
  */
 @property (nonatomic) CircularSliderHandleType handleType;
 
+@property (nonatomic, strong) UIView *handleView;
+
+@property (nonatomic, assign) CGFloat minDegree;
+
+@property (nonatomic, assign) CGFloat maxDegree;
 @end

@@ -155,7 +155,14 @@ static const CGFloat kFitFrameRadius = -1.0;
               currentValue, self.minimumValue, self.maximumValue);
     
     // Update the angleFromNorth to match this newly set value
-    self.angleFromNorth = (currentValue * 360)/(self.maximumValue - self.minimumValue);
+    float minDegree = 0;
+    float totalDegree = 360;
+    if ([self customDegreeAvaiable]) {
+        minDegree = _minDegree;
+        totalDegree = _maxDegree - minDegree;
+    }
+    
+    self.angleFromNorth = (currentValue - self.minimumValue) / (self.maximumValue - self.minimumValue) * totalDegree + minDegree;
     [self sendActionsForControlEvents:UIControlEventValueChanged];
 }
 
@@ -172,6 +179,20 @@ static const CGFloat kFitFrameRadius = -1.0;
     [self setNeedsDisplay]; // Need to redraw with new radius
 }
 
+-(void) setHandleView:(UIView *)handleView {
+    _handleView = handleView;
+    [self addSubview:handleView];
+    [self resetHandleViewPosition];
+}
+
+-(void)resetHandleViewPosition {
+    if (!_handleView) {
+        return;
+    }
+    CGPoint handleCenter = [self pointOnCircleAtAngleFromNorth:self.angleFromNorth];
+    _handleView.center = handleCenter;
+}
+
 #pragma mark - Public getter overrides
 
 /**
@@ -179,9 +200,16 @@ static const CGFloat kFitFrameRadius = -1.0;
  *
  *  @return currentValue Value between minimumValue & maximumValue derived from angleFromNorth
  */
+
 -(float) currentValue
 {
-    return (self.angleFromNorth * (self.maximumValue - self.minimumValue))/360.0f;
+    float minDegree = 0;
+    float totalDegree = 360.0f;
+    if ([self customDegreeAvaiable]) {
+        totalDegree = _maxDegree - _minDegree;
+        minDegree = _minDegree;
+    }
+    return ((self.angleFromNorth - minDegree) * (self.maximumValue - self.minimumValue))/totalDegree;
 }
 
 -(CGFloat) radius
@@ -305,7 +333,11 @@ static const CGFloat kFitFrameRadius = -1.0;
     [self drawLine:ctx];
     
     // Draw the draggable 'handle'
-    [self drawHandle:ctx];
+    if (_handleView) {
+        [self resetHandleViewPosition];
+    } else {
+        [self drawHandle:ctx];
+    }
     
     // Add the labels
     [self drawInnerLabels:ctx];
@@ -536,6 +568,7 @@ static const CGFloat kFitFrameRadius = -1.0;
         }
         self.angleFromNorth = floor([EFCircularTrig angleRelativeToNorthFromPoint:self.centerPoint
                                                                              toPoint:bestGuessPoint]);
+        [self filiterAngle];
         [self setNeedsDisplay];
     }
 }
@@ -544,10 +577,26 @@ static const CGFloat kFitFrameRadius = -1.0;
 {
     self.angleFromNorth = floor([EFCircularTrig angleRelativeToNorthFromPoint:self.centerPoint
                                                                         toPoint:point]);;
+    [self filiterAngle];
     [self setNeedsDisplay];
 }
 
 #pragma mark - Helper functions
+- (BOOL)customDegreeAvaiable {
+    return 359 >= _maxDegree && _maxDegree > _minDegree && _minDegree >= 0;
+}
+
+- (void)filiterAngle {
+    NSLog(@"%d", self.angleFromNorth);
+    if ([self customDegreeAvaiable]) {
+        if (self.angleFromNorth > _maxDegree) {
+            self.angleFromNorth = _maxDegree;
+        } else if (self.angleFromNorth < _minDegree) {
+            self.angleFromNorth = _minDegree;
+        }
+    }
+}
+
 - (BOOL) isDoubleCircleHandle
 {
     return self.handleType == CircularSliderHandleTypeDoubleCircleWithClosedCenter || self.handleType == CircularSliderHandleTypeDoubleCircleWithOpenCenter;

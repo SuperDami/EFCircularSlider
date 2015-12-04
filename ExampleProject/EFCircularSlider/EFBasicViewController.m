@@ -23,7 +23,17 @@
     EFCircularSlider* circularSlider = [[EFCircularSlider alloc] initWithFrame:sliderFrame];
     [circularSlider addTarget:self action:@selector(valueChanged:) forControlEvents:UIControlEventValueChanged];
     [self.view addSubview:circularSlider];
-    [circularSlider setCurrentValue:10.0f];
+    
+    UIView *handle = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, 10.0, 10.0)];
+    handle.backgroundColor = [UIColor grayColor];
+    handle.layer.cornerRadius = 5.0;
+    circularSlider.handleView = handle;
+    handle.userInteractionEnabled = NO;
+    circularSlider.minimumValue = 25;
+    circularSlider.maximumValue = 35;
+    circularSlider.minDegree = 90;
+    circularSlider.maxDegree = 275;
+    [circularSlider setCurrentValue:32.0f];
 }
 
 -(void)valueChanged:(EFCircularSlider*)slider {
