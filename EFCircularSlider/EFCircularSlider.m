@@ -164,6 +164,27 @@ static const CGFloat kFitFrameRadius = -1.0;
     
     self.angleFromNorth = (currentValue - self.minimumValue) / (self.maximumValue - self.minimumValue) * totalDegree + minDegree;
     [self sendActionsForControlEvents:UIControlEventValueChanged];
+    [self setNeedsDisplay];
+}
+
+#define ToRad(deg) 		( (M_PI * (deg)) / 180.0 )
+-(void) setCurrentValueAnimated:(float)currentValue {
+    CGFloat oldAngle = ToRad(self.angleFromNorth) - M_PI_2;
+    [self setCurrentValue:currentValue];
+    
+    if (!_handleView) {
+        return;
+    }
+    CGFloat newAngle = ToRad(self.angleFromNorth) - M_PI_2;
+    
+    UIBezierPath *bezierPath = [UIBezierPath bezierPathWithArcCenter:CGPointMake(self.frame.size.width / 2.0, self.frame.size.height / 2.0) radius:self.radius startAngle:oldAngle endAngle:newAngle clockwise:newAngle > oldAngle];
+    
+    CAKeyframeAnimation *bezierAnimation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
+    bezierAnimation.removedOnCompletion = YES;
+    bezierAnimation.path = bezierPath.CGPath;
+    bezierAnimation.duration = (oldAngle - newAngle) / M_PI * 0.6;
+    bezierAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
+    [_handleView.layer addAnimation:bezierAnimation forKey:@"slideAnimation"];
 }
 
 -(void)setAngleFromNorth:(int)angleFromNorth

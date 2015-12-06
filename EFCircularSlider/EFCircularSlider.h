@@ -106,4 +106,6 @@ typedef enum : NSUInteger {
 @property (nonatomic, assign) CGFloat minDegree;
 
 @property (nonatomic, assign) CGFloat maxDegree;
+
+-(void) setCurrentValueAnimated:(float)currentValue;
 @end
