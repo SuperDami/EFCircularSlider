@@ -566,18 +566,19 @@ static const CGFloat kFitFrameRadius = -1.0;
                 bestGuessPoint = [self pointOnCircleAtAngleFromNorth:degreesForLabel];
             }
         }
-        self.angleFromNorth = floor([EFCircularTrig angleRelativeToNorthFromPoint:self.centerPoint
-                                                                             toPoint:bestGuessPoint]);
-        [self filiterAngle];
+        
+        CGFloat angle = [EFCircularTrig angleRelativeToNorthFromPoint:self.centerPoint
+                                                              toPoint:bestGuessPoint];
+        self.angleFromNorth = floor([self filiterAngle:angle]);
         [self setNeedsDisplay];
     }
 }
 
 -(void)moveHandle:(CGPoint)point
 {
-    self.angleFromNorth = floor([EFCircularTrig angleRelativeToNorthFromPoint:self.centerPoint
-                                                                        toPoint:point]);;
-    [self filiterAngle];
+    CGFloat angle = [EFCircularTrig angleRelativeToNorthFromPoint:self.centerPoint
+                                                          toPoint:point];
+    self.angleFromNorth = floor([self filiterAngle:angle]);
     [self setNeedsDisplay];
 }
 
@@ -586,15 +587,15 @@ static const CGFloat kFitFrameRadius = -1.0;
     return 359 >= _maxDegree && _maxDegree > _minDegree && _minDegree >= 0;
 }
 
-- (void)filiterAngle {
-    NSLog(@"%d", self.angleFromNorth);
+- (CGFloat)filiterAngle:(CGFloat)angle {
     if ([self customDegreeAvaiable]) {
-        if (self.angleFromNorth > _maxDegree) {
-            self.angleFromNorth = _maxDegree;
-        } else if (self.angleFromNorth < _minDegree) {
-            self.angleFromNorth = _minDegree;
+        if (angle > _maxDegree) {
+            angle = _maxDegree;
+        } else if (angle < _minDegree) {
+            angle = _minDegree;
         }
     }
+    return angle;
 }
 
 - (BOOL) isDoubleCircleHandle

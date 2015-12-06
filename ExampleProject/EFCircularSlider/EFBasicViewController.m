@@ -32,7 +32,7 @@
     circularSlider.minimumValue = 25;
     circularSlider.maximumValue = 35;
     circularSlider.minDegree = 90;
-    circularSlider.maxDegree = 275;
+    circularSlider.maxDegree = 270;
     [circularSlider setCurrentValue:32.0f];
 }
 
