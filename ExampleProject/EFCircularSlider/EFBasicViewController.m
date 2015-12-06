@@ -50,6 +50,7 @@
 
 -(void)valueChanged:(EFCircularSlider*)slider {
     NSLog(@"is touched: %d", slider.isTouchAction);
+    NSLog(@"handle pos: %@", NSStringFromCGPoint(slider.handleView.center));
     _valueLabel.text = [NSString stringWithFormat:@"%.02f", slider.currentValue ];
 }
 

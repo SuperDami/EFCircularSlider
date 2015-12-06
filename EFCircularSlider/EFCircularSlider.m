@@ -164,6 +164,7 @@ static const CGFloat kFitFrameRadius = -1.0;
     
     self.angleFromNorth = (currentValue - self.minimumValue) / (self.maximumValue - self.minimumValue) * totalDegree + minDegree;
     _isTouchAction = NO;
+    [self resetHandleViewPosition];
     [self sendActionsForControlEvents:UIControlEventValueChanged];
     [self setNeedsDisplay];
 }
@@ -355,9 +356,10 @@ static const CGFloat kFitFrameRadius = -1.0;
     [self drawLine:ctx];
     
     // Draw the draggable 'handle'
-    if (_handleView) {
+    dispatch_async(dispatch_get_main_queue(), ^{
         [self resetHandleViewPosition];
-    } else {
+    });
+    if (!_handleView) {
         [self drawHandle:ctx];
     }
     
