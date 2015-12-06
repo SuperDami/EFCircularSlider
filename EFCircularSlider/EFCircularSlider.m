@@ -163,6 +163,7 @@ static const CGFloat kFitFrameRadius = -1.0;
     }
     
     self.angleFromNorth = (currentValue - self.minimumValue) / (self.maximumValue - self.minimumValue) * totalDegree + minDegree;
+    _isTouchAction = NO;
     [self sendActionsForControlEvents:UIControlEventValueChanged];
     [self setNeedsDisplay];
 }
@@ -563,6 +564,7 @@ static const CGFloat kFitFrameRadius = -1.0;
     
     CGPoint lastPoint = [touch locationInView:self];
     [self moveHandle:lastPoint];
+    _isTouchAction = YES;
     [self sendActionsForControlEvents:UIControlEventValueChanged];
     
     return YES;

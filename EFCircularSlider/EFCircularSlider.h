@@ -107,5 +107,7 @@ typedef enum : NSUInteger {
 
 @property (nonatomic, assign) CGFloat maxDegree;
 
+@property (nonatomic, readonly) BOOL isTouchAction;
+
 -(void) setCurrentValueAnimated:(float)currentValue;
 @end
