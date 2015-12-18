@@ -596,6 +596,7 @@ static const CGFloat kFitFrameRadius = -1.0;
                                                               toPoint:bestGuessPoint];
         self.angleFromNorth = floor([self filiterAngle:angle]);
         [self setNeedsDisplay];
+        [self sendActionsForControlEvents:UIControlEventTouchUpInside];
     }
 }
 
